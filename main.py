@@ -43,15 +43,17 @@ verificaDistância(60, 76)
 
 class Grafo:
     def __init__(self):
-        self.grafo = {}  # Dicionário vazio que representa o grafo, a chave são os vértices e os valores são as listas de tuplas representando aresta e peso
+        self.grafo = {}  # Dicionario vazio que representa o grafo, a chave são os vértices e os valores são as listas de tuplas representando aresta e peso
 
     # Adiciona uma aresta ao grafo
     def adiciona_aresta(self, origem, destino, peso):
+        #Se o vértice de origem não estiver no grafo, inicializa a lista de grafos
         if origem not in self.grafo:
-            self.grafo[origem] = []
+            self.grafo[origem] = []  # Aqui, o código coloca no dicionário um nó no qual o vértice é a origem colocado e seus valores uma lista vazia (visto que ele ainda não tem conexões)
+        self.grafo[origem].append((destino, peso))
+        #Adiciona a tupla (Destino, peso) na lista de adjacências do vértice de origem
         if destino not in self.grafo:
             self.grafo[destino] = []
-        self.grafo[origem].append((destino, peso))
         self.grafo[destino].append((origem, peso))  # Adiciona a aresta no sentido contrário para grafos não-direcionados
 
     # Imprime o grafo
@@ -59,24 +61,24 @@ class Grafo:
         for vertice in self.grafo:
             print(f"{vertice} -> {self.grafo[vertice]}")
 
-    # Teste da representação visual do grafo
+    #Teste da representação visual do grafo
     def visualizar_grafo(self):
         grafoNX = nx.Graph()
 
-        # Para cada vertice de origem no dicionário de vertices, desenha um vertice e sua conexão
+        # Para cada vértice de origem no dicionário de vértices, desenha um vértice e sua conexão
         for origem in self.grafo:
             for destino, peso in self.grafo[origem]:
                 if grafoNX.has_edge(origem, destino):
-                    continue  # Verifica se a aresta já foi desenhada para evitar duplicação
-                grafoNX.add_edge(origem, destino, weight=peso)
+                    continue  #Isso verifica se na visualização gráfica do grafo, já foi desenhada essa aresta, pois caso já tenha, não se deve duplicar a mesma.
+                grafoNX.add_edge(origem, destino, weight=peso)  #Adiciona o vértice
 
         weights = [d['weight'] for u, v, d in grafoNX.edges(data=True)]
-        k = sum(weights) / len(weights)  # Parâmetro de distanciamento
+        k = sum(weights) / len(weights)  #Parâmetro de distanciamento
 
         layout_Escolhido = nx.spring_layout(grafoNX, k=k, scale=2)
         edges = grafoNX.edges(data=True)
 
-        # Desenho do grafo
+        #Desenho do grafo
         edge_widths = [d['weight'] for u, v, d in edges]
         nx.draw(grafoNX, layout_Escolhido, with_labels=True, node_color='skyblue', node_size=1500, font_size=10, font_weight='bold', edge_color='gray', width=edge_widths)
         nx.draw_networkx_edge_labels(grafoNX, layout_Escolhido, edge_labels={(u, v): d['weight'] for u, v, d in edges}, font_color='red')
@@ -100,10 +102,10 @@ class Grafo:
         for vertice in self.grafo:
             for vertice_vizinho, peso_aresta in self.grafo[vertice]:
                 if distancias[vertice] + peso_aresta < distancias[vertice_vizinho]:
-                    print("Ciclo de peso negativo detectado")
+                    print("ciclo de peso negativo")
                     return
 
-        # Caso não tenha ligação entre eles        
+        # Caso não tenha ligação entre eles
         if distancias[vertice_destino] == float("inf"):
             print(f"Não há um caminho do vértice {vertice_origem} para {vertice_destino}")
             return None
