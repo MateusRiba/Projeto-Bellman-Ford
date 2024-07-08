@@ -43,17 +43,16 @@ verificaDistância(60, 76)
 
 class Grafo:
     def __init__(self):
-        self.grafo = {} #Dicionario vazio que representa o grafo, a chave são os vertices e os valores são as listas de tuplas representando aresta e peso
+        self.grafo = {}  # Dicionário vazio que representa o grafo, a chave são os vértices e os valores são as listas de tuplas representando aresta e peso
 
     # Adiciona uma aresta ao grafo
     def adiciona_aresta(self, origem, destino, peso):
-        #Se o vertice de origem não estiver no grafo, inicializa a lista de grafos
         if origem not in self.grafo:
-            self.grafo[origem] = [] #Aqui, o codigo coloca no dicionario um node no qual o vertice é a origem colocado e seus valores uma lista vazia (visto que ele ainda não tem conexões)
-        self.grafo[origem].append((destino, peso))
-        # Adiciona a tupla (Destino, peso) na lista de adjacencias do vertice de origem
+            self.grafo[origem] = []
         if destino not in self.grafo:
             self.grafo[destino] = []
+        self.grafo[origem].append((destino, peso))
+        self.grafo[destino].append((origem, peso))  # Adiciona a aresta no sentido contrário para grafos não-direcionados
 
     # Imprime o grafo
     def imprime_grafo(self):
@@ -64,34 +63,33 @@ class Grafo:
     def visualizar_grafo(self):
         grafoNX = nx.Graph()
 
-        # Para cada vertice de origem no dicionario de vertices, desenha um vertice e sua conexão
+        # Para cada vertice de origem no dicionário de vertices, desenha um vertice e sua conexão
         for origem in self.grafo:
             for destino, peso in self.grafo[origem]:
-                if grafoNX.has_edge(origem,destino):
-                    continue #isso verifica se na visualização grafica do grafo, já foi desenhado essa aresta, pois caso já tenha, não se deve duplicar a mesma.
-                grafoNX.add_edge(origem,destino, weight=peso) #Adiciona o vertice
+                if grafoNX.has_edge(origem, destino):
+                    continue  # Verifica se a aresta já foi desenhada para evitar duplicação
+                grafoNX.add_edge(origem, destino, weight=peso)
 
         weights = [d['weight'] for u, v, d in grafoNX.edges(data=True)]
-        k = sum(weights) / len(weights) #Parametro de distânciamento
-        
+        k = sum(weights) / len(weights)  # Parâmetro de distanciamento
+
         layout_Escolhido = nx.spring_layout(grafoNX, k=k, scale=2)
         edges = grafoNX.edges(data=True)
-        
-        # Desenho do gráfo
 
+        # Desenho do grafo
         edge_widths = [d['weight'] for u, v, d in edges]
-        nx.draw(grafoNX, layout_Escolhido, with_labels=True, node_color='skyblue', node_size= 1500, font_size=10, font_weight='bold', edge_color='gray', width=edge_widths)
+        nx.draw(grafoNX, layout_Escolhido, with_labels=True, node_color='skyblue', node_size=1500, font_size=10, font_weight='bold', edge_color='gray', width=edge_widths)
         nx.draw_networkx_edge_labels(grafoNX, layout_Escolhido, edge_labels={(u, v): d['weight'] for u, v, d in edges}, font_color='red')
 
-        plt.title("Vizualização do Gráfo")
+        plt.title("Visualização do Grafo")
         plt.show()
 
     def Bellman_ford(self, vertice_origem, vertice_destino):
-        #Define as distâncias do vertice de origem como infinito
-        distancias = { vertice: float("inf") for vertice in self.grafo}
+        # Define as distâncias do vértice de origem como infinito
+        distancias = {vertice: float("inf") for vertice in self.grafo}
         distancias[vertice_origem] = 0
 
-        # Relaxa todas as arestas |V| - 1 vezes -- ?
+        # Relaxa todas as arestas |V| - 1 vezes
         for _ in range(len(self.grafo) - 1):
             for vertice in self.grafo:
                 for vertice_vizinho, peso_aresta in self.grafo[vertice]:
@@ -102,17 +100,17 @@ class Grafo:
         for vertice in self.grafo:
             for vertice_vizinho, peso_aresta in self.grafo[vertice]:
                 if distancias[vertice] + peso_aresta < distancias[vertice_vizinho]:
-                    print("ciclo de peso negativo")
+                    print("Ciclo de peso negativo detectado")
                     return
 
         # Caso não tenha ligação entre eles        
         if distancias[vertice_destino] == float("inf"):
-            print(f"Não há um caminho do vertice {vertice_origem} para {vertice_destino}")
+            print(f"Não há um caminho do vértice {vertice_origem} para {vertice_destino}")
             return None
-        
-        #Printa a distância requerida
+
+        # Printa a distância requerida
         print(f"Menor distância de {vertice_origem} para {vertice_destino} é: {distancias[vertice_destino]}")
-        return distancias
+        return distancias[vertice_destino]
 
     #def imprimir_distancias(self, distancias):
         #print("Distâncias do vértice de origem:")
