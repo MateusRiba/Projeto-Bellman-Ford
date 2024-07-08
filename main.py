@@ -71,12 +71,16 @@ class Grafo:
                     continue #isso verifica se na visualização grafica do grafo, já foi desenhado essa aresta, pois caso já tenha, não se deve duplicar a mesma.
                 grafoNX.add_edge(origem,destino, weight=peso) #Adiciona o vertice
 
-        layout_Escolhido = nx.spring_layout(grafoNX)
+        weights = [d['weight'] for u, v, d in grafoNX.edges(data=True)]
+        k = sum(weights) / len(weights) #Parametro de distânciamento
+        
+        layout_Escolhido = nx.spring_layout(grafoNX, k=k, scale=2)
         edges = grafoNX.edges(data=True)
-
+        
         # Desenho do gráfo
 
-        nx.draw(grafoNX, layout_Escolhido, with_labels=True, node_color='skyblue', node_size= 1500, font_size=10, font_weight='bold', edge_color='gray')
+        edge_widths = [d['weight'] for u, v, d in edges]
+        nx.draw(grafoNX, layout_Escolhido, with_labels=True, node_color='skyblue', node_size= 1500, font_size=10, font_weight='bold', edge_color='gray', width=edge_widths)
         nx.draw_networkx_edge_labels(grafoNX, layout_Escolhido, edge_labels={(u, v): d['weight'] for u, v, d in edges}, font_color='red')
 
         plt.title("Vizualização do Gráfo")
