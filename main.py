@@ -37,7 +37,7 @@ def verificaDistância(number1, number2):
 
     print(f"A distância em linha reta entre as estações {nomes_estação[number1]} e {nomes_estação[number2]} é {testeDistância:.2f} km") #:2f é para limitar a a 2 casas decimais a distância
 
-#verificaDistância(34, 76)
+verificaDistância(60, 76)
 
 # TESTE GRÁFO
 
@@ -86,7 +86,38 @@ class Grafo:
         plt.title("Vizualização do Gráfo")
         plt.show()
 
+    def Bellman_ford(self, vertice_origem, vertice_destino):
+        #Define as distâncias do vertice de origem como infinito
+        distancias = { vertice: float("inf") for vertice in self.grafo}
+        distancias[vertice_origem] = 0
 
+        # Relaxa todas as arestas |V| - 1 vezes -- ?
+        for _ in range(len(self.grafo) - 1):
+            for vertice in self.grafo:
+                for vertice_vizinho, peso_aresta in self.grafo[vertice]:
+                    if distancias[vertice] + peso_aresta < distancias[vertice_vizinho]:
+                        distancias[vertice_vizinho] = distancias[vertice] + peso_aresta
+
+        # Verifica a existência de ciclos de peso negativo
+        for vertice in self.grafo:
+            for vertice_vizinho, peso_aresta in self.grafo[vertice]:
+                if distancias[vertice] + peso_aresta < distancias[vertice_vizinho]:
+                    print("ciclo de peso negativo")
+                    return
+
+        # Caso não tenha ligação entre eles        
+        if distancias[vertice_destino] == float("inf"):
+            print(f"Não há um caminho do vertice {vertice_origem} para {vertice_destino}")
+            return None
+        
+        #Printa a distância requerida
+        print(f"Menor distância de {vertice_origem} para {vertice_destino} é: {distancias[vertice_destino]}")
+        return distancias
+
+    #def imprimir_distancias(self, distancias):
+        #print("Distâncias do vértice de origem:")
+        #for vertice in distancias:
+            #print(f"Distância até {vertice}: {distancias[vertice]}")
 
         
 
@@ -95,6 +126,16 @@ grafo.adiciona_aresta("riomar", "recife", 5)
 grafo.adiciona_aresta("plaza", "recife", 10)
 grafo.adiciona_aresta("tacaruna", "riomar", 15)
 grafo.adiciona_aresta("tacaruna", "plaza", 15)
-grafo.adiciona_aresta("recife", "plaza", 15)
+grafo.adiciona_aresta("recife", "plaza", 12)
+grafo.adiciona_aresta("tacaruna", "boa vista", 24)
+grafo.adiciona_aresta("casa de breno", "casa de mateus", 30)
+
 grafo.imprime_grafo()
+
+grafo.Bellman_ford("riomar", "plaza")
+grafo.Bellman_ford("riomar", "recife")
+grafo.Bellman_ford("riomar", "casa de breno")
+grafo.Bellman_ford("riomar", "tacaruna")
+
 grafo.visualizar_grafo()
+
