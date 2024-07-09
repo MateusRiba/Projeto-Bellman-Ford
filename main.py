@@ -2,6 +2,7 @@ import pandas as pd
 from geopy.distance import geodesic
 import networkx as nx
 import matplotlib.pyplot as plt
+import random
 
 # Pandas lê o arquivo CSV
 csv_file_path = "LocalizaçõesEstações.csv"
@@ -22,6 +23,7 @@ for index, row in df.iterrows():
     nomes_estação.append(nome)
     coordenadas_Estação.append(coordenada)
 
+#Classe que define grafo e o algoritmo de Bellman-Ford
 class Grafo:
     def __init__(self):
         self.grafo = {}  # Dicionario vazio que representa o grafo, a chave são os vértices e os valores são as listas de tuplas representando aresta e peso
@@ -61,8 +63,8 @@ class Grafo:
 
         #Desenho do grafo
         edge_widths = [d['weight'] for u, v, d in edges]
-        nx.draw(grafoNX, layout_Escolhido, with_labels=True, node_color='orange', node_size=800, font_size=5, font_weight='bold', edge_color='black', width=edge_widths)
-        nx.draw_networkx_edge_labels(grafoNX, layout_Escolhido, edge_labels={(u, v): d['weight'] for u, v, d in edges}, font_color='red')
+        nx.draw(grafoNX, layout_Escolhido, with_labels= True, node_color='orange', node_size=800, font_size=5, font_weight='bold', edge_color='black', width=edge_widths)
+        nx.draw_networkx_edge_labels(grafoNX, layout_Escolhido, edge_labels={(u, v): d['weight'] for u, v, d in edges}, font_color='blue')
 
         plt.title("Visualização do Grafo")
         plt.show()
@@ -72,12 +74,16 @@ class Grafo:
         distancias = {vertice: float("inf") for vertice in self.grafo}
         distancias[vertice_origem] = 0
 
+        # Rastreia o predecessor de cada vértice para reconstruir o caminho
+        predecessores = {vertice: None for vertice in self.grafo}
+
         # Relaxa todas as arestas |V| - 1 vezes
         for _ in range(len(self.grafo) - 1):
             for vertice in self.grafo:
                 for vertice_vizinho, peso_aresta in self.grafo[vertice]:
                     if distancias[vertice] + peso_aresta < distancias[vertice_vizinho]:
                         distancias[vertice_vizinho] = distancias[vertice] + peso_aresta
+                        predecessores[vertice_vizinho] = vertice
 
         # Verifica a existência de ciclos de peso negativo
         for vertice in self.grafo:
@@ -92,13 +98,21 @@ class Grafo:
             return None
 
         # Printa a distância requerida
-        print(f"Menor distância de {vertice_origem} para {vertice_destino} é: {distancias[vertice_destino]}")
-        return distancias[vertice_destino]
+        print(f"Menor distância de {vertice_origem} para {vertice_destino} é: {distancias[vertice_destino]} Kilometros")
+
+        # Reconstrói o caminho
+        caminho = []
+        passo = vertice_destino
+        while passo is not None:
+            caminho.append(passo)
+            passo = predecessores[passo]
+        caminho = caminho[::-1]  # Inverte o caminho
+
+        print(f"Caminho: {' -> '.join(caminho)}")
+        return distancias[vertice_destino], caminho
 
 def main():
     grafoEstações = Grafo()
-    
-    
     listaDistâncias = []
     # Loop que conecta todos os vértices entre si seguindo a lógica da proximidade mínima de distância
     for i in range(len(coordenadas_Estação)):
@@ -108,7 +122,7 @@ def main():
     
     # Dicionario que armazena as arestas de cada vertice
     arestas = {nome: [] for nome in nomes_estação}
-    
+
     # Coloca as distâncias calculadas no dicionario
     for origem, destino, peso in listaDistâncias:
         arestas[origem].append((destino, peso))
@@ -121,6 +135,38 @@ def main():
         for destino, peso in arestas[origem][:2]:  # Pega as 2 menores
                 grafoEstações.adiciona_aresta(origem, destino, peso)
 
-
-    grafoEstações.visualizar_grafo()
+    # Impede que o grafo fique desconexo
+    listaDistâncias.append((nomes_estação[69], nomes_estação[89], round(peso, 2)))
+    grafoEstações.adiciona_aresta("Mercado do Cordeiro", "CCS UFPE", round(geodesic(coordenadas_Estação[69], coordenadas_Estação[89]).kilometers, 2))
+    x = True
+    
+    #Loop de interação com o usuario
+    while True:
+        pergunta1 = input("Digite '1' caso queira ver uma distância minima aleatoria entre 2 estações de Bike \nDigite '2' caso queira escolher quais estações comparar\n")
+        
+        if pergunta1 == "1":
+            origem_random = random.choice(nomes_estação)
+            destino_random = random.choice(nomes_estação)
+            while destino_random == origem_random:
+                destino_random = random.choice(nomes_estação)
+            print(f"Estação de origem: {origem_random}, Estação de destino: {destino_random}")
+            grafoEstações.Bellman_ford(origem_random, destino_random)
+            grafoEstações.visualizar_grafo() #AQUI DEVE TER MODIFICAÇÔES
+            break
+        
+        elif pergunta1 == '2':
+            estaçãoOrigem = input("Você Digitou 2!\nEscreva qual a estação de origem: ")
+            estaçãoDestino = input("Agora escreva qual a estação destino: ")
+            
+            if estaçãoOrigem not in nomes_estação or estaçãoDestino not in nomes_estação:
+                print("Ops! Digite 2 estações existentes! Você pode verificar seus nomes aqui:\n")
+                print(f"{nomes_estação}\n")
+            else:
+                grafoEstações.Bellman_ford(estaçãoOrigem, estaçãoDestino)
+                grafoEstações.visualizar_grafo() #AQUI DEVE TER MODIFICAÇÕES
+                break
+                
+        elif pergunta1 != '2' or pergunta1 != '1': 
+            print("Digite uma opção valida")
+   
 main()
