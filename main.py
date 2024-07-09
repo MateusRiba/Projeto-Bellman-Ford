@@ -39,6 +39,19 @@ class Grafo:
             self.grafo[destino] = []
         self.grafo[destino].append((origem, peso))  # Adiciona a aresta no sentido contrário para grafos não-direcionados
 
+    #Verifica se o grafo é completamente conexo
+    def é_conexo(self):
+        visitados = set()
+        def dfs(vértice):
+            visitados.add(vértice)
+            for vizinho, _ in self.grafo[vértice]:
+                if vizinho not in visitados:
+                    dfs(vizinho)
+        
+         #1Inicia a DFS a partir do primeiro vértice do grafo
+        dfs(next(iter(self.grafo)))
+        return len(visitados) == len(self.grafo)
+
     # Imprime o grafo
     def imprime_grafo(self):
         for vertice in self.grafo:
@@ -46,7 +59,7 @@ class Grafo:
 
     #Teste da representação visual do grafo
     def visualizar_grafo(self):
-        grafoNX = nx.Graph()
+        grafoNX = nx.DiGraph()
 
         # Para cada vértice de origem no dicionário de vértices, desenha um vértice e sua conexão
         for origem in self.grafo:
@@ -55,16 +68,12 @@ class Grafo:
                     continue  #Isso verifica se na visualização gráfica do grafo, já foi desenhada essa aresta, pois caso já tenha, não se deve duplicar a mesma.
                 grafoNX.add_edge(origem, destino, weight=peso)  #Adiciona o vértice
 
-        weights = [d['weight'] for u, v, d in grafoNX.edges(data=True)]
-        k = sum(weights) / len(weights)  #Parâmetro de distanciamento
-
-        layout_Escolhido = nx.spring_layout(grafoNX, k=k, scale=20)
+        layout_Escolhido = nx.spring_layout(grafoNX)
         edges = grafoNX.edges(data=True)
 
         #Desenho do grafo
         edge_widths = [d['weight'] for u, v, d in edges]
-        nx.draw(grafoNX, layout_Escolhido, with_labels= True, node_color='orange', node_size=800, font_size=5, font_weight='bold', edge_color='black', width=edge_widths)
-        nx.draw_networkx_edge_labels(grafoNX, layout_Escolhido, edge_labels={(u, v): d['weight'] for u, v, d in edges}, font_color='blue')
+        nx.draw_networkx(grafoNX, layout_Escolhido, with_labels= True, node_color='orange', node_size=800, font_size=5, font_weight='bold', edge_color='black', width=edge_widths, arrows= True)
 
         plt.title("Visualização do Grafo")
         plt.show()
@@ -132,7 +141,7 @@ def main():
     for origem in arestas:
         arestas[origem].sort(key=lambda x: x[1])  # Ordena para pegar as menores distâncias
         i = 0
-        for destino, peso in arestas[origem][:2]:  # Pega as 2 menores
+        for destino, peso in arestas[origem][:3]:  # Pega as 2 menores
                 grafoEstações.adiciona_aresta(origem, destino, peso)
 
     # Impede que o grafo fique desconexo
