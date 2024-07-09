@@ -3,6 +3,8 @@ from geopy.distance import geodesic
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
+import tkinter as tk
+from tkinter import ttk, messagebox
 
 # Pandas lê o arquivo CSV
 csv_file_path = "LocalizaçõesEstações.csv"
@@ -141,7 +143,7 @@ def main():
     for origem in arestas:
         arestas[origem].sort(key=lambda x: x[1])  # Ordena para pegar as menores distâncias
         i = 0
-        for destino, peso in arestas[origem][:8]:  # Pega as 2 menores
+        for destino, peso in arestas[origem][:2]:  # Pega as 2 menores
                 grafoEstações.adiciona_aresta(origem, destino, round(peso, 2))
 
     # Impede que o grafo fique desconexo
@@ -153,33 +155,73 @@ def main():
     grafoEstações.adiciona_aresta("Faculdade Damas", "R. Adalberto Camargo", round(geodesic(coordenadas_Estação[41], coordenadas_Estação[40]).kilometers, 2))
     grafoEstações.adiciona_aresta("Plaza Casa Forte", "Praça da Torre", round(geodesic(coordenadas_Estação[84], coordenadas_Estação[88]).kilometers, 2))
 
-    #Loop de interação com o usuario
-    while True:
-        pergunta1 = input("Digite '1' caso queira ver uma distância minima aleatoria entre 2 estações de Bike \nDigite '2' caso queira escolher quais estações comparar\n")
-        
-        if pergunta1 == "1":
-            origem_random = random.choice(nomes_estação)
+    def calculo_random():
+        origem_random = random.choice(nomes_estação)
+        destino_random = random.choice(nomes_estação)
+        while destino_random == origem_random:
             destino_random = random.choice(nomes_estação)
-            while destino_random == origem_random:
-                destino_random = random.choice(nomes_estação)
-            print(f"Estação de origem: {origem_random}, Estação de destino: {destino_random}")
-            grafoEstações.Bellman_ford(origem_random, destino_random)
-            grafoEstações.visualizar_grafo() #AQUI DEVE TER MODIFICAÇÔES
-            break
-        
-        elif pergunta1 == '2':
-            estaçãoOrigem = input("Você Digitou 2!\nEscreva qual a estação de origem: ")
-            estaçãoDestino = input("Agora escreva qual a estação destino: ")
-            
-            if estaçãoOrigem not in nomes_estação or estaçãoDestino not in nomes_estação:
-                print("Ops! Digite 2 estações existentes! Você pode verificar seus nomes aqui:\n")
-                print(f"{nomes_estação}\n")
+
+        resultado, caminho = grafoEstações.Bellman_ford(origem_random, destino_random)
+        if resultado is not None:
+            grafoEstações.visualizar_grafo()
+            resultado_label.config(text=f"Menor distância: {resultado} km\nCaminho: {' -> '.join(caminho)}")
+
+    def calculo_escolhido(origem, destino):
+        resultado, caminho = grafoEstações.Bellman_ford(origem, destino)
+        if resultado is not None:
+            grafoEstações.visualizar_grafo()
+            resultado_label.config(text=f"Menor distância: {resultado} km\nCaminho: {' -> '.join(caminho)}")
+
+    def abrir_janela_random():
+        calculo_random()
+
+    def abrir_janela_escolhido():
+        def calcular():
+            origem = origem_entry.get()
+            destino = destino_entry.get()
+            if origem != "" and destino != "":
+                if origem in nomes_estação and destino in nomes_estação:
+                    calculo_escolhido(origem, destino)
+                    window.destroy()
+                else:
+                    messagebox.showerror("Erro", "Por favor, escolha estações válidas.")
             else:
-                grafoEstações.Bellman_ford(estaçãoOrigem, estaçãoDestino)
-                grafoEstações.visualizar_grafo() #AQUI DEVE TER MODIFICAÇÕES
-                break
-                
-        elif pergunta1 != '2' or pergunta1 != '1': 
-            print("Digite uma opção valida")
+                messagebox.showerror("Erro", "Por favor, preencha ambos os campos.")
+
+        window = tk.Toplevel(root)
+        window.title("Escolher Estações")
+        window.geometry("300x150")
+
+        origem_label = ttk.Label(window, text="Estação de Origem:")
+        origem_label.pack(pady=5)
+        origem_entry = ttk.Entry(window)
+        origem_entry.pack()
+
+        destino_label = ttk.Label(window, text="Estação de Destino:")
+        destino_label.pack(pady=5)
+        destino_entry = ttk.Entry(window)
+        destino_entry.pack()
+
+        calcular_button = ttk.Button(window, text="Calcular", command=calcular)
+        calcular_button.pack(pady=10)
+
+    # Função para iniciar a interface gráfica
+    root = tk.Tk()
+    root.title("Sistema de Estações de Bike")
+    root.geometry("400x200")
+
+    titulo_label = ttk.Label(root, text="Escolha uma opção:")
+    titulo_label.pack(pady=10)
+
+    random_button = ttk.Button(root, text="Distância entre Estações Aleatórias", command=abrir_janela_random)
+    random_button.pack(pady=5)
+
+    escolher_button = ttk.Button(root, text="Escolher Estações", command=abrir_janela_escolhido)
+    escolher_button.pack(pady=5)
+
+    resultado_label = ttk.Label(root, text="")
+    resultado_label.pack(pady=10)
+
+    root.mainloop()
    
 main()
