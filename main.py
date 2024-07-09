@@ -22,18 +22,6 @@ for index, row in df.iterrows():
     nomes_estação.append(nome)
     coordenadas_Estação.append(coordenada)
 
-#print(f"{numeros_estação[1]}, {nomes_estação[1]}, {coordenadas_Estação[1]}")
-
-# TESTE DE DISTÂNCIA
-#def verificaDistância(number1, number2):
-
-    #testeDistância = geodesic(coordenadas_Estação[number1], coordenadas_Estação[number2]).kilometers
-
-    #print(f"A distância em linha reta entre as estações {nomes_estação[number1]} e {nomes_estação[number2]} é {testeDistância:.2f} km") #:2f é para limitar a a 2 casas decimais a distância
-
-#verificaDistância(60, 76)
-
-# TESTE GRÁFO
 class Grafo:
     def __init__(self):
         self.grafo = {}  # Dicionario vazio que representa o grafo, a chave são os vértices e os valores são as listas de tuplas representando aresta e peso
@@ -109,14 +97,30 @@ class Grafo:
 
 def main():
     grafoEstações = Grafo()
-    listapeso = []
-    #Loop que conecta todos os vertices entre si seguindo a logica da proximidade minima de distância
+    
+    
+    listaDistâncias = []
+    # Loop que conecta todos os vértices entre si seguindo a lógica da proximidade mínima de distância
     for i in range(len(coordenadas_Estação)):
         for j in range(i+1, len(coordenadas_Estação)):
-            peso = geodesic(coordenadas_Estação[i], coordenadas_Estação[j]).kilometers
-            listapeso.append(round(peso, 2))
-            if peso < 0.75:
-                grafoEstações.adiciona_aresta(nomes_estação[i], nomes_estação[j], round(peso, 2))
+            peso = geodesic(coordenadas_Estação[i], coordenadas_Estação[j]).kilometers #Biblioteca geodesic pega a tupla de coordenadas e compara, transformando em uma distância em KM
+            listaDistâncias.append((nomes_estação[i], nomes_estação[j], round(peso, 2)))
+    
+    # Dicionario que armazena as arestas de cada vertice
+    arestas = {nome: [] for nome in nomes_estação}
+    
+    # Coloca as distâncias calculadas no dicionario
+    for origem, destino, peso in listaDistâncias:
+        arestas[origem].append((destino, peso))
+        arestas[destino].append((origem, peso))
+
+    # ordena e adiciona as 2 menores arestas de cada vertice no grafo
+    for origem in arestas:
+        arestas[origem].sort(key=lambda x: x[1])  # Ordena para pegar as menores distâncias
+        i = 0
+        for destino, peso in arestas[origem][:2]:  # Pega as 2 menores
+                grafoEstações.adiciona_aresta(origem, destino, peso)
+
 
     grafoEstações.visualizar_grafo()
 main()
