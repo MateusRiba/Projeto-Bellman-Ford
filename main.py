@@ -73,7 +73,7 @@ class Grafo:
 
         #Desenho do grafo
         edge_widths = [d['weight'] for u, v, d in edges]
-        nx.draw_networkx(grafoNX, layout_Escolhido, with_labels= True, node_color='orange', node_size=800, font_size=5, font_weight='bold', edge_color='black', width=edge_widths, arrows= True)
+        nx.draw_networkx(grafoNX, layout_Escolhido, with_labels= True, node_color='orange', node_size=500, font_size=5, font_weight='bold', edge_color='blue', width=edge_widths, arrows= True)
 
         plt.title("Visualização do Grafo")
         plt.show()
@@ -137,18 +137,22 @@ def main():
         arestas[origem].append((destino, peso))
         arestas[destino].append((origem, peso))
 
-    # ordena e adiciona as 2 menores arestas de cada vertice no grafo
+    # ordena e adiciona as 2 menores arestas de cada vertice no grafo1
     for origem in arestas:
         arestas[origem].sort(key=lambda x: x[1])  # Ordena para pegar as menores distâncias
         i = 0
-        for destino, peso in arestas[origem][:3]:  # Pega as 2 menores
-                grafoEstações.adiciona_aresta(origem, destino, peso)
+        for destino, peso in arestas[origem][:8]:  # Pega as 2 menores
+                grafoEstações.adiciona_aresta(origem, destino, round(peso, 2))
 
     # Impede que o grafo fique desconexo
     listaDistâncias.append((nomes_estação[69], nomes_estação[89], round(peso, 2)))
     grafoEstações.adiciona_aresta("Mercado do Cordeiro", "CCS UFPE", round(geodesic(coordenadas_Estação[69], coordenadas_Estação[89]).kilometers, 2))
-    x = True
-    
+    grafoEstações.adiciona_aresta("R. Verdes Mares", "Praça Massangana", round(geodesic(coordenadas_Estação[56], coordenadas_Estação[60]).kilometers, 2))
+    grafoEstações.adiciona_aresta("Casa da Cultura", "Pina", round(geodesic(coordenadas_Estação[9], coordenadas_Estação[51]).kilometers, 2))
+    grafoEstações.adiciona_aresta("Mercado Novo Água Fria", "Praia da Casa Caiada", round(geodesic(coordenadas_Estação[74], coordenadas_Estação[68]).kilometers, 2))
+    grafoEstações.adiciona_aresta("Faculdade Damas", "R. Adalberto Camargo", round(geodesic(coordenadas_Estação[41], coordenadas_Estação[40]).kilometers, 2))
+    grafoEstações.adiciona_aresta("Plaza Casa Forte", "Praça da Torre", round(geodesic(coordenadas_Estação[84], coordenadas_Estação[88]).kilometers, 2))
+
     #Loop de interação com o usuario
     while True:
         pergunta1 = input("Digite '1' caso queira ver uma distância minima aleatoria entre 2 estações de Bike \nDigite '2' caso queira escolher quais estações comparar\n")
