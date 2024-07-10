@@ -155,58 +155,10 @@ def main():
     grafoEstações.adiciona_aresta("Faculdade Damas", "R. Adalberto Camargo", round(geodesic(coordenadas_Estação[41], coordenadas_Estação[40]).kilometers, 2))
     grafoEstações.adiciona_aresta("Plaza Casa Forte", "Praça da Torre", round(geodesic(coordenadas_Estação[84], coordenadas_Estação[88]).kilometers, 2))
 
-    """def calculo_random():
-        origem_random = random.choice(nomes_estação)
-        destino_random = random.choice(nomes_estação)
-        while destino_random == origem_random:
-            destino_random = random.choice(nomes_estação)
-
-        resultado, caminho = grafoEstações.Bellman_ford(origem_random, destino_random)
-        if resultado is not None:
-            grafoEstações.visualizar_grafo()
-            resultado_label.config(text=f"Menor distância: {resultado} km\nCaminho: {' -> '.join(caminho)}")
-
-    def calculo_escolhido(origem, destino):
-        resultado, caminho = grafoEstações.Bellman_ford(origem, destino)
-        if resultado is not None:
-            grafoEstações.visualizar_grafo()
-            resultado_label.config(text=f"Menor distância: {resultado} km\nCaminho: {' -> '.join(caminho)}")
-
-    def abrir_janela_random():
-        calculo_random()
-
-    def abrir_janela_escolhido():
-        def calcular():
-            origem = origem_entry.get()
-            destino = destino_entry.get()
-            if origem != "" and destino != "":
-                if origem in nomes_estação and destino in nomes_estação:
-                    calculo_escolhido(origem, destino)
-                    window.destroy()
-                else:
-                    messagebox.showerror("Erro", "Por favor, escolha estações válidas.")
-            else:
-                messagebox.showerror("Erro", "Por favor, preencha ambos os campos.")
-
-        window = tk.Toplevel(root)
-        window.title("Escolher Estações")
-        window.geometry("300x150")
-
-        origem_label = ttk.Label(window, text="Estação de Origem:")
-        origem_label.pack(pady=5)
-        origem_entry = ttk.Entry(window)
-        origem_entry.pack()
-
-        destino_label = ttk.Label(window, text="Estação de Destino:")
-        destino_label.pack(pady=5)
-        destino_entry = ttk.Entry(window)
-        destino_entry.pack()
-
-        calcular_button = ttk.Button(window, text="Calcular", command=calcular)
-        calcular_button.pack(pady=10)"""
-
+    
     Aplicativo(grafoEstações)
-    # Função para iniciar a interface gráfica
+    #Fim da main
+#Classe da interface gráfica
 class Aplicativo():
     def __init__(self, estações):
         self.grafoEstações = estações
@@ -234,7 +186,7 @@ class Aplicativo():
         self.bt_estacao_aleatoria = tk.Button(self.frame_1, text="Estações Aleatórias",background='#C0C0C0', bd=2, command=self.calculo_random)
         self.bt_estacao_aleatoria.place(relx=0.04, rely=0.62, relwidth=0.18, relheight=0.08)
         #criação botão usuário escolhe as estações
-        self.bt_escolhe_estacao = tk.Button(self.frame_1, text="Escolher Estações",background='#C0C0C0', bd=2)
+        self.bt_escolhe_estacao = tk.Button(self.frame_1, text="Escolher Estações",background='#C0C0C0', bd=2, command=self.calcular)
         self.bt_escolhe_estacao.place(relx=0.04, rely=0.48, relwidth=0.18, relheight=0.08)
         
         #criando label sistema de estações de bike Recife
@@ -279,21 +231,23 @@ class Aplicativo():
             self.resultado_label= tk.Label(self.frame_1,
                                         text=f"Menor distância: {resultado} km\nCaminho: {' -> '.join(caminho)}",
                                         background='#B0C4DE', font=('none', 7))
-            self.resultado_label.place(relx=0.01, rely=0.68, relwidth=0.99)
+            self.resultado_label.place(relx=0.01, rely=0.74, relwidth=0.99)
 
-    def calculo_escolhido(origem, destino):
-        resultado, caminho = grafoEstações.Bellman_ford(origem, destino)
+    def calculo_escolhido(self,origem, destino):
+        resultado, caminho = self.grafoEstações.Bellman_ford(origem, destino)
         if resultado is not None:
-            grafoEstações.visualizar_grafo()
-            resultado_label.config(text=f"Menor distância: {resultado} km\nCaminho: {' -> '.join(caminho)}")
+            self.grafoEstações.visualizar_grafo()
+            self.resultado_label= tk.Label(self.frame_1,
+                                        text=f"Menor distância: {resultado} km\nCaminho: {' -> '.join(caminho)}",
+                                        background='#B0C4DE', font=('none', 7))
+            self.resultado_label.place(relx=0.01, rely=0.74, relwidth=0.99)
     
     def calcular(self):
             origem = self.entry_inicial.get()
             destino = self.entry_final.get()
             if origem != "" and destino != "":
                 if origem in nomes_estação and destino in nomes_estação:
-                    calculo_escolhido(origem, destino)
-                    window.destroy()
+                    self.calculo_escolhido(origem, destino)
                 else:
                     messagebox.showerror("Erro", "Por favor, escolha estações válidas.")
             else:
