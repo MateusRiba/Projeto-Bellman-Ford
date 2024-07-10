@@ -32,16 +32,16 @@ class Grafo:
 
     # Adiciona uma aresta ao grafo
     def adiciona_aresta(self, origem, destino, peso):
-        #Se o vértice de origem não estiver no grafo, inicializa a lista de grafos
+        # Se o vértice de origem não estiver no grafo, inicializa a lista de grafos
         if origem not in self.grafo:
             self.grafo[origem] = []  # Aqui, o código coloca no dicionário um nó no qual o vértice é a origem colocado e seus valores uma lista vazia (visto que ele ainda não tem conexões)
         self.grafo[origem].append((destino, peso))
-        #Adiciona a tupla (Destino, peso) na lista de adjacências do vértice de origem
+        # Adiciona a tupla (Destino, peso) na lista de adjacências do vértice de origem
         if destino not in self.grafo:
             self.grafo[destino] = []
         self.grafo[destino].append((origem, peso))  # Adiciona a aresta no sentido contrário para grafos não-direcionados
 
-    #Verifica se o grafo é completamente conexo
+    # Verifica se o grafo é completamente conexo
     def é_conexo(self):
         visitados = set()
         def dfs(vértice):
@@ -49,8 +49,8 @@ class Grafo:
             for vizinho, _ in self.grafo[vértice]:
                 if vizinho not in visitados:
                     dfs(vizinho)
-        
-         #1Inicia a DFS a partir do primeiro vértice do grafo
+
+        # Inicia a DFS a partir do primeiro vértice do grafo
         dfs(next(iter(self.grafo)))
         return len(visitados) == len(self.grafo)
 
@@ -59,23 +59,30 @@ class Grafo:
         for vertice in self.grafo:
             print(f"{vertice} -> {self.grafo[vertice]}")
 
-    #Teste da representação visual do grafo
-    def visualizar_grafo(self):
+    # Teste da representação visual do grafo
+    def visualizar_grafo(self, caminho=None):
         grafoNX = nx.DiGraph()
 
         # Para cada vértice de origem no dicionário de vértices, desenha um vértice e sua conexão
         for origem in self.grafo:
             for destino, peso in self.grafo[origem]:
                 if grafoNX.has_edge(origem, destino):
-                    continue  #Isso verifica se na visualização gráfica do grafo, já foi desenhada essa aresta, pois caso já tenha, não se deve duplicar a mesma.
-                grafoNX.add_edge(origem, destino, weight=peso)  #Adiciona o vértice
+                    continue  # Isso verifica se na visualização gráfica do grafo, já foi desenhada essa aresta, pois caso já tenha, não se deve duplicar a mesma.
+
+                # Escolhe a cor da aresta com base na existência do caminho e se a aresta está no caminho
+                edge_color = 'blue'
+                if caminho and (origem, destino) in caminho:
+                    edge_color = 'red'  # Aresta no caminho é vermelha
+
+                grafoNX.add_edge(origem, destino, weight=peso, color=edge_color)  # Adiciona a aresta com a cor escolhida
 
         layout_Escolhido = nx.spring_layout(grafoNX)
         edges = grafoNX.edges(data=True)
 
-        #Desenho do grafo
+        # Desenho do grafo
         edge_widths = [d['weight'] for u, v, d in edges]
-        nx.draw_networkx(grafoNX, layout_Escolhido, with_labels= True, node_color='orange', node_size=500, font_size=5, font_weight='bold', edge_color='blue', width=edge_widths, arrows= True)
+        edge_colors = [d['color'] for u, v, d in edges]
+        nx.draw_networkx(grafoNX, layout_Escolhido, with_labels=True, node_color='orange', node_size=500, font_size=5, font_weight='bold', edge_color=edge_colors, width=edge_widths, arrows=True)
 
         plt.title("Visualização do Grafo")
         plt.show()
@@ -109,6 +116,7 @@ class Grafo:
             return None
 
         # Printa a distância requerida
+        distancias[vertice_destino] = round(distancias[vertice_destino], 2)
         print(f"Menor distância de {vertice_origem} para {vertice_destino} é: {distancias[vertice_destino]} Kilometros")
 
         # Reconstrói o caminho
@@ -121,6 +129,7 @@ class Grafo:
 
         print(f"Caminho: {' -> '.join(caminho)}")
         return distancias[vertice_destino], caminho
+
 
 def main():
     grafoEstações = Grafo()
@@ -162,54 +171,52 @@ def main():
 class Aplicativo():
     def __init__(self, estações):
         self.grafoEstações = estações
-        root = tk.Tk()
-        self.root = root
+        self.root = tk.Tk()
         self.tela()
         self.frames_tela()
         self.widgets_frame_1()
         self.lista_frame_2()
-        root.mainloop()
+        self.root.mainloop()
     
-    def tela(self): #janela do aplicativo
+    def tela(self):
         self.root.title("Sistemas de Estações de Bike")
         self.root.configure(background='#4682B4')
         self.root.geometry("640x480")
         self.root.resizable(False, False)
-    def frames_tela(self): #cria os quadros na janela onde vão aparecer a informação 
+    
+    def frames_tela(self):
         self.frame_1 = tk.Frame(self.root, bd=4, bg='#B0C4DE', highlightbackground='#708090', highlightthickness=3)
         self.frame_1.place(relx=0.02, rely=0.02, relwidth=0.96, relheight=0.46)
         
         self.frame_2 = tk.Frame(self.root, bd=4, bg='#B0C4DE', highlightbackground='#708090', highlightthickness=3)
         self.frame_2.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.46)
+    
     def widgets_frame_1(self):
-        #criação botão de estações aleatórias
-        self.bt_estacao_aleatoria = tk.Button(self.frame_1, text="Estações Aleatórias",background='#C0C0C0', bd=2, command=self.calculo_random)
+        self.bt_estacao_aleatoria = tk.Button(self.frame_1, text="Estações Aleatórias", background='#C0C0C0', bd=2, command=self.estacoes_aleatorias)
         self.bt_estacao_aleatoria.place(relx=0.04, rely=0.62, relwidth=0.18, relheight=0.08)
-        #criação botão usuário escolhe as estações
-        self.bt_escolhe_estacao = tk.Button(self.frame_1, text="Escolher Estações",background='#C0C0C0', bd=2, command=self.calcular)
+        
+        self.bt_escolhe_estacao = tk.Button(self.frame_1, text="Escolher Estações", background='#C0C0C0', bd=2, command=self.escolher_estacoes)
         self.bt_escolhe_estacao.place(relx=0.04, rely=0.48, relwidth=0.18, relheight=0.08)
         
-        #criando label sistema de estações de bike Recife
         self.lb_titulo = tk.Label(self.frame_1, text='Sistema de Estações de Bike do Recife', background='#B0C4DE', font=('bold'))
         self.lb_titulo.place(relx=0.04, rely=0.05)
         
-        
-        #criando label estação inicial e entrada da estação
         self.lb_inicial = tk.Label(self.frame_1, text='Estação inicial', background='#B0C4DE')
         self.lb_inicial.place(relx=0.04, rely=0.2)
         
         self.entry_inicial = tk.Entry(self.frame_1)
         self.entry_inicial.place(relx=0.18, rely=0.2, relwidth=0.28)
-        #criando label estação final e entrada da estação
+        
         self.lb_final = tk.Label(self.frame_1, text='Estação final', background='#B0C4DE')
         self.lb_final.place(relx=0.04, rely=0.34)
         
         self.entry_final = tk.Entry(self.frame_1)
         self.entry_final.place(relx=0.18, rely=0.34, relwidth=0.28)
+    
     def lista_frame_2(self):
         self.lista_estacoes = ttk.Treeview(self.frame_2, height=3, column=('col1'))
-        self.lista_estacoes.heading('#0',text='')
-        self.lista_estacoes.heading('#1',text='Nome')
+        self.lista_estacoes.heading('#0', text='')
+        self.lista_estacoes.heading('#1', text='Nome')
         
         self.lista_estacoes.column('#0', width=1)
         self.lista_estacoes.column('#1', width=599)
@@ -219,7 +226,8 @@ class Aplicativo():
         self.lista_estacoes.configure(yscrollcommand=self.scrollLista.set)
         self.scrollLista.place(relx=0.96, rely=0.1, relwidth=0.04, relheight=0.85)
     
-    def calculo_random(self):
+    def estacoes_aleatorias(self):
+        self.fechar_janela_atual()
         origem_random = random.choice(nomes_estação)
         destino_random = random.choice(nomes_estação)
         while destino_random == origem_random:
@@ -227,48 +235,43 @@ class Aplicativo():
 
         resultado, caminho = self.grafoEstações.Bellman_ford(origem_random, destino_random)
         if resultado is not None:
-            self.grafoEstações.visualizar_grafo()
-            self.resultado_label= tk.Label(self.frame_1,
-                                        text=f"Menor distância: {resultado} km\nCaminho: {' -> '.join(caminho)}",
-                                        background='#B0C4DE', font=('none', 7))
-            self.resultado_label.place(relx=0.01, rely=0.74, relwidth=0.99)
-
-    def calculo_escolhido(self,origem, destino):
-        resultado, caminho = self.grafoEstações.Bellman_ford(origem, destino)
-        if resultado is not None:
-            self.grafoEstações.visualizar_grafo()
-            self.resultado_label= tk.Label(self.frame_1,
-                                        text=f"Menor distância: {resultado} km\nCaminho: {' -> '.join(caminho)}",
-                                        background='#B0C4DE', font=('none', 7))
-            self.resultado_label.place(relx=0.01, rely=0.74, relwidth=0.99)
+            self.abrir_janela_resultados(resultado, caminho)
+            self.grafoEstações.visualizar_grafo(caminho)  # Passa o caminho encontrado para visualização
     
-    def calcular(self):
-            origem = self.entry_inicial.get()
-            destino = self.entry_final.get()
-            if origem != "" and destino != "":
-                if origem in nomes_estação and destino in nomes_estação:
-                    self.calculo_escolhido(origem, destino)
-                else:
-                    messagebox.showerror("Erro", "Por favor, escolha estações válidas.")
+    def escolher_estacoes(self):
+        origem = self.entry_inicial.get()
+        destino = self.entry_final.get()
+        if origem != "" and destino != "":
+            if origem in nomes_estação and destino in nomes_estação:
+                self.fechar_janela_atual()
+                resultado, caminho = self.grafoEstações.Bellman_ford(origem, destino)
+                if resultado is not None:
+                    self.abrir_janela_resultados(resultado, caminho)
+                    self.grafoEstações.visualizar_grafo(caminho)  # Passa o caminho encontrado para visualização
             else:
-                messagebox.showerror("Erro", "Por favor, preencha ambos os campos.")
-    """root = tk.Tk()
-    root.title("Sistema de Estações de Bike")
-    root.geometry("480x320")
-    root.configure(background='#4682B4')
+                messagebox.showerror("Erro", "Por favor, escolha estações válidas.")
+        else:
+            messagebox.showerror("Erro", "Por favor, preencha ambos os campos.")
 
-    titulo_label = ttk.Label(root, text="Escolha uma opção:")
-    titulo_label.pack(pady=10)
+    
+    def fechar_janela_atual(self):
+        self.root.destroy()
+    
+    def abrir_janela_resultados(self, resultado, caminho):
+        nova_janela = tk.Tk()
+        nova_janela.title("Resultados")
+        nova_janela.configure(background='#4682B4')
+        nova_janela.geometry("640x480")
+        
+        frame_resultados = tk.Frame(nova_janela, bd=4, bg='#B0C4DE', highlightbackground='#708090', highlightthickness=3)
+        frame_resultados.place(relx=0.02, rely=0.02, relwidth=0.96, relheight=0.96)
+        
+        resultado_texto = f"Menor distância: {resultado} km\nCaminho: {' -> '.join(caminho)}"
+        resultado_label = tk.Text(frame_resultados, wrap=tk.WORD, background='#B0C4DE')
+        resultado_label.insert(tk.END, resultado_texto)
+        resultado_label.place(relx=0.05, rely=0.05, relwidth=0.9, relheight=0.9)
+        
+        nova_janela.mainloop()
 
-    random_button = ttk.Button(root, text="Distância entre Estações Aleatórias", command=abrir_janela_random)
-    random_button.pack(pady=5)
-
-    escolher_button = ttk.Button(root, text="Escolher Estações", command=abrir_janela_escolhido)
-    escolher_button.pack(pady=5)
-
-    resultado_label = ttk.Label(root, text="")
-    resultado_label.pack(pady=10)
-
-    root.mainloop()"""
    
 main()
