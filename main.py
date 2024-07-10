@@ -155,7 +155,6 @@ def main():
     grafoEstações.adiciona_aresta("Faculdade Damas", "R. Adalberto Camargo", round(geodesic(coordenadas_Estação[41], coordenadas_Estação[40]).kilometers, 2))
     grafoEstações.adiciona_aresta("Plaza Casa Forte", "Praça da Torre", round(geodesic(coordenadas_Estação[84], coordenadas_Estação[88]).kilometers, 2))
 
-    
     Aplicativo(grafoEstações)
     #Fim da main
 #Classe da interface gráfica
@@ -252,23 +251,4 @@ class Aplicativo():
                     messagebox.showerror("Erro", "Por favor, escolha estações válidas.")
             else:
                 messagebox.showerror("Erro", "Por favor, preencha ambos os campos.")
-    """root = tk.Tk()
-    root.title("Sistema de Estações de Bike")
-    root.geometry("480x320")
-    root.configure(background='#4682B4')
-
-    titulo_label = ttk.Label(root, text="Escolha uma opção:")
-    titulo_label.pack(pady=10)
-
-    random_button = ttk.Button(root, text="Distância entre Estações Aleatórias", command=abrir_janela_random)
-    random_button.pack(pady=5)
-
-    escolher_button = ttk.Button(root, text="Escolher Estações", command=abrir_janela_escolhido)
-    escolher_button.pack(pady=5)
-
-    resultado_label = ttk.Label(root, text="")
-    resultado_label.pack(pady=10)
-
-    root.mainloop()"""
-   
 main()
