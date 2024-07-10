@@ -205,10 +205,71 @@ def main():
         calcular_button = ttk.Button(window, text="Calcular", command=calcular)
         calcular_button.pack(pady=10)
 
+    Aplicativo()
     # Função para iniciar a interface gráfica
-    root = tk.Tk()
+class Aplicativo():
+    def __init__(self):
+        root = tk.Tk()
+        self.root = root
+        self.tela()
+        self.frames_tela()
+        self.widgets_frame_1()
+        self.lista_frame_2()
+        root.mainloop()
+    
+    def tela(self): #janela do aplicativo
+        self.root.title("Sistemas de Estações de Bike")
+        self.root.configure(background='#4682B4')
+        self.root.geometry("640x480")
+        self.root.resizable(False, False)
+    def frames_tela(self): #cria os quadros na janela onde vão aparecer a informação 
+        self.frame_1 = tk.Frame(self.root, bd=4, bg='#B0C4DE', highlightbackground='#708090', highlightthickness=3)
+        self.frame_1.place(relx=0.02, rely=0.02, relwidth=0.96, relheight=0.46)
+        
+        self.frame_2 = tk.Frame(self.root, bd=4, bg='#B0C4DE', highlightbackground='#708090', highlightthickness=3)
+        self.frame_2.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.46)
+    def widgets_frame_1(self):
+        #criação botão de estações aleatórias
+        self.bt_estacao_aleatoria = tk.Button(self.frame_1, text="Estações Aleatórias",background='#C0C0C0', bd=2)
+        self.bt_estacao_aleatoria.place(relx=0.04, rely=0.82, relwidth=0.18, relheight=0.08)
+        #criação botão usuário escolhe as estações
+        self.bt_escolhe_estacao = tk.Button(self.frame_1, text="Escolher Estações",background='#C0C0C0', bd=2)
+        self.bt_escolhe_estacao.place(relx=0.04, rely=0.68, relwidth=0.18, relheight=0.08)
+        
+        #criando label sistema de estações de bike Recife
+        self.lb_titulo = tk.Label(self.frame_1, text='Sistema de Estações de Bike do Recife', background='#B0C4DE', font=('bold'))
+        self.lb_titulo.place(relx=0.04, rely=0.1)
+        
+        
+        #criando label estação inicial e entrada da estação
+        self.lb_inicial = tk.Label(self.frame_1, text='Estação inicial', background='#B0C4DE')
+        self.lb_inicial.place(relx=0.04, rely=0.4)
+        
+        self.entry_inicial = tk.Entry(self.frame_1)
+        self.entry_inicial.place(relx=0.18, rely=0.4, relwidth=0.28)
+        #criando label estação final e entrada da estação
+        self.lb_final = tk.Label(self.frame_1, text='Estação final', background='#B0C4DE')
+        self.lb_final.place(relx=0.04, rely=0.54)
+        
+        self.entry_final = tk.Entry(self.frame_1)
+        self.entry_final.place(relx=0.18, rely=0.54, relwidth=0.28)
+    def lista_frame_2(self):
+        self.lista_estacoes = ttk.Treeview(self.frame_2, height=3, column=('col1'))
+        self.lista_estacoes.heading('#0',text='')
+        self.lista_estacoes.heading('#1',text='Nome')
+        
+        self.lista_estacoes.column('#0', width=1)
+        self.lista_estacoes.column('#1', width=599)
+        self.lista_estacoes.place(relx=0.01, rely=0.1, relwidth=0.95, relheight=0.85)
+        
+        self.scrollLista = ttk.Scrollbar(self.frame_2, orient='vertical')
+        self.lista_estacoes.configure(yscrollcommand=self.scrollLista.set)
+        self.scrollLista.place(relx=0.96, rely=0.1, relwidth=0.04, relheight=0.85)
+    
+    """root = tk.Tk()
     root.title("Sistema de Estações de Bike")
-    root.geometry("400x200")
+    root.geometry("480x320")
+    root.configure(background='#4682B4')
 
     titulo_label = ttk.Label(root, text="Escolha uma opção:")
     titulo_label.pack(pady=10)
@@ -222,6 +283,6 @@ def main():
     resultado_label = ttk.Label(root, text="")
     resultado_label.pack(pady=10)
 
-    root.mainloop()
+    root.mainloop()"""
    
 main()
