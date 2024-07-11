@@ -63,28 +63,30 @@ class Grafo:
     def visualizar_grafo(self, caminho=None):
         grafoNX = nx.DiGraph()
 
-        # Para cada vértice de origem no dicionário de vértices, desenha um vértice e sua conexão
         for origem in self.grafo:
             for destino, peso in self.grafo[origem]:
-                if grafoNX.has_edge(origem, destino):
-                    continue  # Isso verifica se na visualização gráfica do grafo, já foi desenhada essa aresta, pois caso já tenha, não se deve duplicar a mesma.
-
-                # Escolhe a cor da aresta com base na existência do caminho e se a aresta está no caminho
-                edge_color = 'blue'
-                if caminho and (origem, destino) in caminho:
-                    edge_color = 'red'  # Aresta no caminho é vermelha
-
-                grafoNX.add_edge(origem, destino, weight=peso, color=edge_color)  # Adiciona a aresta com a cor escolhida
+                if caminho:
+                    # Verifica se a aresta está no caminho
+                    if (origem, destino) in zip(caminho, caminho[1:]) or (destino, origem) in zip(caminho, caminho[1:]):
+                        grafoNX.add_edge(origem, destino, weight=2, color='blue')
+                    else:
+                        grafoNX.add_edge(origem, destino, weight=1, color='black')
+                else:
+                    grafoNX.add_edge(origem, destino, weight=1, color='black')
 
         layout_Escolhido = nx.spring_layout(grafoNX)
         edges = grafoNX.edges(data=True)
 
-        # Desenho do grafo
         edge_widths = [d['weight'] for u, v, d in edges]
         edge_colors = [d['color'] for u, v, d in edges]
         nx.draw_networkx(grafoNX, layout_Escolhido, with_labels=True, node_color='orange', node_size=500, font_size=5, font_weight='bold', edge_color=edge_colors, width=edge_widths, arrows=True)
 
-        plt.title("Visualização do Grafo")
+        def tela_cheia():
+            manager = plt.get_current_fig_manager()
+            manager.window.state('zoomed')
+
+        plt.title("Grafo das Estações")
+        tela_cheia()
         plt.show()
 
     def Bellman_ford(self, vertice_origem, vertice_destino):
@@ -260,7 +262,7 @@ class Aplicativo():
         if resultado is not None:
             self.abrir_janela_resultados(resultado, caminho)
             self.grafoEstações.visualizar_grafo(caminho)  # Passa o caminho encontrado para visualização
-    
+
     def escolher_estacoes(self):
         origem = self.entry_inicial.get()
         destino = self.entry_final.get()
@@ -275,6 +277,7 @@ class Aplicativo():
                 messagebox.showerror("Erro", "Por favor, escolha estações válidas.")
         else:
             messagebox.showerror("Erro", "Por favor, preencha ambos os campos.")
+
 
     
     def fechar_janela_atual(self):
