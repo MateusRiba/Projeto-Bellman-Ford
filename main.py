@@ -181,22 +181,22 @@ class Aplicativo():
     def tela(self):
         self.root.title("Sistemas de Estações de Bike")
         self.root.configure(background='#4682B4')
-        self.root.geometry("640x480")
+        self.root.geometry("700x570")
         self.root.resizable(False, False)
     
     def frames_tela(self):
         self.frame_1 = tk.Frame(self.root, bd=4, bg='#B0C4DE', highlightbackground='#708090', highlightthickness=3)
-        self.frame_1.place(relx=0.02, rely=0.02, relwidth=0.96, relheight=0.46)
+        self.frame_1.place(relx=0.02, rely=0.02, relwidth=0.96, relheight=0.36)
         
         self.frame_2 = tk.Frame(self.root, bd=4, bg='#B0C4DE', highlightbackground='#708090', highlightthickness=3)
-        self.frame_2.place(relx=0.02, rely=0.5, relwidth=0.96, relheight=0.46)
+        self.frame_2.place(relx=0.02, rely=0.38, relwidth=0.96, relheight=0.61)
     
     def widgets_frame_1(self):
         self.bt_estacao_aleatoria = tk.Button(self.frame_1, text="Estações Aleatórias", background='#C0C0C0', bd=2, command=self.estacoes_aleatorias)
-        self.bt_estacao_aleatoria.place(relx=0.04, rely=0.62, relwidth=0.18, relheight=0.08)
+        self.bt_estacao_aleatoria.place(relx=0.04, rely=0.62, relwidth=0.18, relheight=0.1)
         
         self.bt_escolhe_estacao = tk.Button(self.frame_1, text="Escolher Estações", background='#C0C0C0', bd=2, command=self.escolher_estacoes)
-        self.bt_escolhe_estacao.place(relx=0.04, rely=0.48, relwidth=0.18, relheight=0.08)
+        self.bt_escolhe_estacao.place(relx=0.04, rely=0.48, relwidth=0.18, relheight=0.1)
         
         self.lb_titulo = tk.Label(self.frame_1, text='Sistema de Estações de Bike do Recife', background='#B0C4DE', font=('bold'))
         self.lb_titulo.place(relx=0.04, rely=0.05)
@@ -214,17 +214,40 @@ class Aplicativo():
         self.entry_final.place(relx=0.18, rely=0.34, relwidth=0.28)
     
     def lista_frame_2(self):
-        self.lista_estacoes = ttk.Treeview(self.frame_2, height=3, column=('col1'))
-        self.lista_estacoes.heading('#0', text='')
-        self.lista_estacoes.heading('#1', text='Nome')
-        
-        self.lista_estacoes.column('#0', width=1)
-        self.lista_estacoes.column('#1', width=599)
-        self.lista_estacoes.place(relx=0.01, rely=0.1, relwidth=0.95, relheight=0.85)
-        
-        self.scrollLista = ttk.Scrollbar(self.frame_2, orient='vertical')
-        self.lista_estacoes.configure(yscrollcommand=self.scrollLista.set)
-        self.scrollLista.place(relx=0.96, rely=0.1, relwidth=0.04, relheight=0.85)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="1-Prefeitura 2-Praça Tiradentes 3-Praça do Arsenal 4-Boulevard Rio Branco 5-Paço Alfândega 6-Cais de Santa Rita ",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="7-Praça da República 8-Praça da Independência 9-Praça Joaquim Nabuco 10-Casa da Cultura 11-Ponte do Limoeiro ",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="12-Tortura Nunca Mais 13-Parque Treze de Maio 14-Cine São Luiz 15-Igreja de Santa Cruz 16-Riachuelo 17-Sossego 18-Palmares",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="19-Diário de Pernambuco 20-R. Frei Cassimiro 21-SESC Santo Amaro 22-Cemitério de Santo Amaro 23-Rua do Lazer ",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="24-Praça Oswaldo Cruz 25-R. da Soledade 26-Salesiano 27-Praça Miguel de Cervantes 28-SJCC 29-Castelinho 30-Praça Chora Menino",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="31-CNBB 32-Praça do Derby 33-Politécnica 34-Praça João Pereira Borges 35-Ponte da Capunga 36-Instituto Capibaribe 37-Beira Rio",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="38-Praça do Entroncamento 39-Rua Samuel Pinto 40-Praça Otília 41-R. Adalberto Camargo 42-Faculdade Damas 43-Parque da Jaqueira",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="44-Praça Dr. José Vilela 45-Praça da FEB 46-Clube do Náutico 47-Venezuela 48-Hospital Oswaldo Cruz ",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="49-R. Bernardino Soares da Silva 50-R. Alfredo de Medeiros 51-Mercado da Encruzilhada 52-Praça do Rosarinho 53-Pina",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="54-Segundo Jardim 55-Prof. José Brandão 56-Padre Carapuceiro 57-R. Verdes Mares 58-Parque Dona Lindú",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="59-Rua Eng. Antônio Jucá 60-Shopping Guararapes 61-Praça Massangana 62-Metrô Monte dos Guararapes",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="63-Mercado Eufrásio Barbosa 64-Praça do Carmo 65-Praça Doze de Março 66-Posto Polo Pina 67-Alberto Lundgren",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="68-R. Dr. Manoel de Barros Lima 69-Praia da Casa Caiada 70-CCS UFPE 71-Restaurante Universitário UFPE 72-Praça Melvin Jones",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="72-Praça Melvin Jones 73-Matriz da Boa Vista 74-Rua Couto Magalhães 75-Mercado Novo Água Fria 76-Praça Castro Alves",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="77-Beira Mar 78-Terceiro Jardim de Boa Viagem 79-Rosarinho 80-Estrada do Encanamento 81-Estrada das Ubaias ",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="82-Mercado Casa Amarela 83-Sítio Trindade 84-Hospital Agamenon Magalhães 85-Plaza Casa Forte 86-Mercado da Madalena",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
+        self.lb_lista = tk.Label(self.frame_2,font='none, 8', text="87- Rua Amélia 88-Casa do Estudante UFPE 89-Praça da Torre 90-Mercado do Cordeiro",background='#B0C4DE')
+        self.lb_lista.pack(pady=0.001)
     
     def estacoes_aleatorias(self):
         self.fechar_janela_atual()
