@@ -241,8 +241,6 @@ class Aplicativo():
         else:
             messagebox.showerror("Erro", "Por favor, preencha ambos os campos.")
 
-
-    
     def fechar_janela_atual(self):
         self.root.destroy()
     
@@ -295,7 +293,6 @@ def main():
     grafoEstações.adiciona_aresta("Faculdade Damas", "R. Adalberto Camargo", round(geodesic(coordenadas_Estação[41], coordenadas_Estação[40]).kilometers, 2))
     grafoEstações.adiciona_aresta("Plaza Casa Forte", "Praça da Torre", round(geodesic(coordenadas_Estação[84], coordenadas_Estação[88]).kilometers, 2))
 
-    
     Aplicativo(grafoEstações)
     #Fim da main
 
