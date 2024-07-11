@@ -131,44 +131,7 @@ class Grafo:
 
         print(f"Caminho: {' -> '.join(caminho)}")
         return distancias[vertice_destino], caminho
-
-
-def main():
-    grafoEstações = Grafo()
-    listaDistâncias = []
-    # Loop que conecta todos os vértices entre si seguindo a lógica da proximidade mínima de distância
-    for i in range(len(coordenadas_Estação)):
-        for j in range(i+1, len(coordenadas_Estação)):
-            peso = geodesic(coordenadas_Estação[i], coordenadas_Estação[j]).kilometers #Biblioteca geodesic pega a tupla de coordenadas e compara, transformando em uma distância em KM
-            listaDistâncias.append((nomes_estação[i], nomes_estação[j], round(peso, 2)))
     
-    # Dicionario que armazena as arestas de cada vertice
-    arestas = {nome: [] for nome in nomes_estação}
-
-    # Coloca as distâncias calculadas no dicionario
-    for origem, destino, peso in listaDistâncias:
-        arestas[origem].append((destino, peso))
-        arestas[destino].append((origem, peso))
-
-    # ordena e adiciona as 2 menores arestas de cada vertice no grafo1
-    for origem in arestas:
-        arestas[origem].sort(key=lambda x: x[1])  # Ordena para pegar as menores distâncias
-        i = 0
-        for destino, peso in arestas[origem][:2]:  # Pega as 2 menores
-                grafoEstações.adiciona_aresta(origem, destino, round(peso, 2))
-
-    # Impede que o grafo fique desconexo
-    listaDistâncias.append((nomes_estação[69], nomes_estação[89], round(peso, 2)))
-    grafoEstações.adiciona_aresta("Mercado do Cordeiro", "CCS UFPE", round(geodesic(coordenadas_Estação[69], coordenadas_Estação[89]).kilometers, 2))
-    grafoEstações.adiciona_aresta("R. Verdes Mares", "Praça Massangana", round(geodesic(coordenadas_Estação[56], coordenadas_Estação[60]).kilometers, 2))
-    grafoEstações.adiciona_aresta("Casa da Cultura", "Pina", round(geodesic(coordenadas_Estação[9], coordenadas_Estação[51]).kilometers, 2))
-    grafoEstações.adiciona_aresta("Mercado Novo Água Fria", "Praia da Casa Caiada", round(geodesic(coordenadas_Estação[74], coordenadas_Estação[68]).kilometers, 2))
-    grafoEstações.adiciona_aresta("Faculdade Damas", "R. Adalberto Camargo", round(geodesic(coordenadas_Estação[41], coordenadas_Estação[40]).kilometers, 2))
-    grafoEstações.adiciona_aresta("Plaza Casa Forte", "Praça da Torre", round(geodesic(coordenadas_Estação[84], coordenadas_Estação[88]).kilometers, 2))
-
-    
-    Aplicativo(grafoEstações)
-    #Fim da main
 #Classe da interface gráfica
 class Aplicativo():
     def __init__(self, estações):
@@ -299,5 +262,41 @@ class Aplicativo():
         
         nova_janela.mainloop()
 
-   
+def main():
+    grafoEstações = Grafo()
+    listaDistâncias = []
+    # Loop que conecta todos os vértices entre si seguindo a lógica da proximidade mínima de distância
+    for i in range(len(coordenadas_Estação)):
+        for j in range(i+1, len(coordenadas_Estação)):
+            peso = geodesic(coordenadas_Estação[i], coordenadas_Estação[j]).kilometers #Biblioteca geodesic pega a tupla de coordenadas e compara, transformando em uma distância em KM
+            listaDistâncias.append((nomes_estação[i], nomes_estação[j], round(peso, 2)))
+    
+    # Dicionario que armazena as arestas de cada vertice
+    arestas = {nome: [] for nome in nomes_estação}
+
+    # Coloca as distâncias calculadas no dicionario
+    for origem, destino, peso in listaDistâncias:
+        arestas[origem].append((destino, peso))
+        arestas[destino].append((origem, peso))
+
+    # ordena e adiciona as 2 menores arestas de cada vertice no grafo1
+    for origem in arestas:
+        arestas[origem].sort(key=lambda x: x[1])  # Ordena para pegar as menores distâncias
+        i = 0
+        for destino, peso in arestas[origem][:2]:  # Pega as 2 menores
+                grafoEstações.adiciona_aresta(origem, destino, round(peso, 2))
+
+    # Impede que o grafo fique desconexo
+    listaDistâncias.append((nomes_estação[69], nomes_estação[89], round(peso, 2)))
+    grafoEstações.adiciona_aresta("Mercado do Cordeiro", "CCS UFPE", round(geodesic(coordenadas_Estação[69], coordenadas_Estação[89]).kilometers, 2))
+    grafoEstações.adiciona_aresta("R. Verdes Mares", "Praça Massangana", round(geodesic(coordenadas_Estação[56], coordenadas_Estação[60]).kilometers, 2))
+    grafoEstações.adiciona_aresta("Casa da Cultura", "Pina", round(geodesic(coordenadas_Estação[9], coordenadas_Estação[51]).kilometers, 2))
+    grafoEstações.adiciona_aresta("Mercado Novo Água Fria", "Praia da Casa Caiada", round(geodesic(coordenadas_Estação[74], coordenadas_Estação[68]).kilometers, 2))
+    grafoEstações.adiciona_aresta("Faculdade Damas", "R. Adalberto Camargo", round(geodesic(coordenadas_Estação[41], coordenadas_Estação[40]).kilometers, 2))
+    grafoEstações.adiciona_aresta("Plaza Casa Forte", "Praça da Torre", round(geodesic(coordenadas_Estação[84], coordenadas_Estação[88]).kilometers, 2))
+
+    
+    Aplicativo(grafoEstações)
+    #Fim da main
+
 main()
