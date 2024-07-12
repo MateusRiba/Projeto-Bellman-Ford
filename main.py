@@ -4,7 +4,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import random
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import messagebox
 
 # Pandas lê o arquivo CSV
 csv_file_path = "LocalizaçõesEstações.csv"
